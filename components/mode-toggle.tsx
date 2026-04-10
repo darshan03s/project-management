@@ -18,7 +18,7 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon-sm">
+        <Button variant="outline">
           <HugeiconsIcon
             icon={Sun}
             className="h-4 w-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { ModeToggle } from './mode-toggle'
+import UserSignIn from './user-sign-in'
 
 export default function Header() {
   return (
@@ -7,7 +8,8 @@ export default function Header() {
       <div className="header-left text-xs sm:text-sm">
         <Link href={'/'}>Project management</Link>
       </div>
-      <div className="header-right">
+      <div className="header-right flex items-center gap-3">
+        <UserSignIn />
         <ModeToggle />
       </div>
     </header>
