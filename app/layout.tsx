@@ -50,7 +50,7 @@ export default function RootLayout({
         >
           <TooltipProvider>
             <Header />
-            <main>{children}</main>
+            {children}
           </TooltipProvider>
           <Toaster />
         </ThemeProvider>
