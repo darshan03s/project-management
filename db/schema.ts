@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { pgTable, text, timestamp, boolean, index } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, boolean, index, uniqueIndex } from 'drizzle-orm/pg-core'
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -91,3 +91,41 @@ export const accountRelations = relations(account, ({ one }) => ({
     references: [user.id]
   })
 }))
+
+export const project = pgTable('project', {
+  id: text('id').primaryKey(),
+
+  name: text('name').notNull(),
+  description: text('description'),
+
+  ownerId: text('owner_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+
+  githubLink: text('githubLink').default(''),
+
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at')
+    .$onUpdate(() => new Date())
+    .notNull()
+})
+
+export const projectMember = pgTable(
+  'project_member',
+  {
+    id: text('id').primaryKey(),
+
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+
+    role: text('role', { enum: ['OWNER', 'MEMBER'] }).notNull(),
+
+    createdAt: timestamp('created_at').defaultNow().notNull()
+  },
+  (table) => [uniqueIndex('project_member_project_user_idx').on(table.projectId, table.userId)]
+)

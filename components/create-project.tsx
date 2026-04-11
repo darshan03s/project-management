@@ -20,9 +20,14 @@ import { CreateProjectFormValues, createProjectSchema } from '@/lib/zod-schemas/
 import { createProjectAction } from '@/actions/project'
 import { toast } from 'sonner'
 import { useState } from 'react'
+import { authClient } from '@/lib/auth-client'
+import { usePathname } from 'next/navigation'
 
 export default function CreateProject() {
   const [open, setOpen] = useState(false)
+  const { data: userData } = authClient.useSession()
+  const pathname = usePathname()
+
   const {
     register,
     handleSubmit,
@@ -32,7 +37,7 @@ export default function CreateProject() {
   })
 
   const onSubmit = async (data: CreateProjectFormValues) => {
-    const res = await createProjectAction(data)
+    const res = await createProjectAction(data, userData!.user.id)
     if (res.success) {
       toast.success('Project created successfully')
       setOpen(false)
@@ -40,6 +45,8 @@ export default function CreateProject() {
       toast.error(`Project could not be created\n${res.error}`)
     }
   }
+
+  if (pathname === '/sign-in') return null
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

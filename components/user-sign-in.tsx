@@ -43,7 +43,7 @@ export default function UserSignIn() {
           >
             <Image src={data.user.image!} width={500} height={500} alt="User Image" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-50">
+          <DropdownMenuContent align="end" className="w-fit">
             <DropdownMenuItem className="flex flex-col items-start">
               <span className="font-bold">{data.user.name}</span>
               <span className="text-xs">{data.user.email}</span>
