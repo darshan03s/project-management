@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import Header from '@/components/header'
+import Providers from '@/components/providers'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -49,8 +50,10 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider>
-            <Header />
-            {children}
+            <Providers>
+              <Header />
+              {children}
+            </Providers>
           </TooltipProvider>
           <Toaster />
         </ThemeProvider>

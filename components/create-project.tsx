@@ -22,28 +22,44 @@ import { toast } from 'sonner'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
 import { usePathname } from 'next/navigation'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export default function CreateProject() {
   const [open, setOpen] = useState(false)
   const { data: userData } = authClient.useSession()
   const pathname = usePathname()
 
+  const queryClient = useQueryClient()
+
+  const createProjectMutation = useMutation({
+    mutationFn: (data: CreateProjectFormValues) => createProjectAction(data, userData!.user.id),
+
+    onSuccess: (res) => {
+      if (res.success) {
+        toast.success('Project created successfully')
+        setOpen(false)
+
+        queryClient.invalidateQueries({ queryKey: ['projects'] })
+      } else {
+        toast.error(`Project could not be created\n${res.error}`)
+      }
+    },
+
+    onError: () => {
+      toast.error('Something went wrong')
+    }
+  })
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = useForm<CreateProjectFormValues>({
     resolver: zodResolver(createProjectSchema)
   })
 
   const onSubmit = async (data: CreateProjectFormValues) => {
-    const res = await createProjectAction(data, userData!.user.id)
-    if (res.success) {
-      toast.success('Project created successfully')
-      setOpen(false)
-    } else {
-      toast.error(`Project could not be created\n${res.error}`)
-    }
+    createProjectMutation.mutate(data)
   }
 
   if (pathname === '/sign-in') return null
@@ -82,8 +98,15 @@ export default function CreateProject() {
             )}
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={isSubmitting} className="disabled:opacity-50">
-              {isSubmitting && <HugeiconsIcon icon={Loading} className="animate-spin" />} Create
+            <Button
+              type="submit"
+              disabled={createProjectMutation.isPending}
+              className="disabled:opacity-50"
+            >
+              {createProjectMutation.isPending && (
+                <HugeiconsIcon icon={Loading} className="animate-spin" />
+              )}{' '}
+              Create
             </Button>
           </DialogFooter>
         </form>

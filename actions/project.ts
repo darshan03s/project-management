@@ -15,7 +15,7 @@ export async function createProjectAction(data: CreateProjectFormValues, userId:
   const { name, description, githubLink } = data
 
   try {
-    const result = db.transaction(async (tx) => {
+    const result = await db.transaction(async (tx) => {
       const projectId = randomUUID()
 
       await tx.insert(project).values({
