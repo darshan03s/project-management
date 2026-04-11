@@ -79,7 +79,7 @@ const User = () => {
         />
         <div className="flex flex-col text-xs text-left">
           <span className="font-bold">{data!.user.name}</span>
-          <span>{data!.user.email}</span>
+          <span className="text-[10px] truncate">{data!.user.email}</span>
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-fit">
