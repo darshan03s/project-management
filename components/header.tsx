@@ -3,6 +3,7 @@ import { ModeToggle } from './mode-toggle'
 import UserSignIn from './user-sign-in'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { TimeManagementIcon } from '@hugeicons/core-free-icons'
+import CreateProject from './create-project'
 
 export default function Header() {
   return (
@@ -14,6 +15,7 @@ export default function Header() {
         </Link>
       </div>
       <div className="header-right flex items-center gap-3">
+        <CreateProject />
         <UserSignIn />
         <ModeToggle />
       </div>
