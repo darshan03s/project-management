@@ -12,10 +12,10 @@ export default function Page() {
   }
 
   return (
-    <main className="flex-1 flex items-center justify-center">
+    <div className="h-[calc(100vh-48px)] w-full flex items-center justify-center">
       <Button className="flex items-center gap-3" onClick={handleSignIn}>
         <Google /> Sign in with Google
       </Button>
-    </main>
+    </div>
   )
 }
