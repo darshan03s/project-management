@@ -6,7 +6,7 @@ import { TimeManagementIcon } from '@hugeicons/core-free-icons'
 
 export default function Header() {
   return (
-    <header className="h-12 w-full flex items-center justify-between px-4 bg-secondary text-secondary-foreground sticky z-10 top-0 left-0">
+    <header className="h-12 w-full flex items-center justify-between px-4 sticky z-10 top-0 left-0">
       <div className="header-left text-xs sm:text-sm">
         <Link href={'/'} className="flex items-center gap-2">
           <HugeiconsIcon icon={TimeManagementIcon} />
