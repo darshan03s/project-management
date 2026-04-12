@@ -1,9 +1,10 @@
 'use client'
 
-import { Button, buttonVariants } from '@/components/ui/button'
+import InviteMembers from '@/components/invite-members'
+import { buttonVariants } from '@/components/ui/button'
 import { capitalize, cn } from '@/lib/utils'
 import { Project } from '@/types'
-import { AddTeamIcon, Github } from '@hugeicons/core-free-icons'
+import { Github } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
@@ -37,9 +38,7 @@ export default function Page() {
       <div className="project-info p-4 space-y-3 w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">{capitalize(project!.name)}</h1>
-          <Button>
-            <HugeiconsIcon icon={AddTeamIcon} /> Invite
-          </Button>
+          <InviteMembers />
         </div>
         <p className="text-xs">{project?.description}</p>
         <div className="flex items-center gap-4">
