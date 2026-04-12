@@ -75,7 +75,7 @@ export default async function Page({ params }: { params: Promise<{ inviteId: str
         <span className="bg-primary text-primary-foreground p-2 rounded-full">
           <HugeiconsIcon icon={Briefcase01Icon} />
         </span>
-        <AlertTitle className="text-3xl">Join project</AlertTitle>
+        <AlertTitle className="text-3xl">Join {projectData.name}</AlertTitle>
         <AlertDescription>You will join project as a member</AlertDescription>
         <JoinProject projectId={projectData.id} />
       </Alert>

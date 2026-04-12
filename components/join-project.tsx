@@ -1,6 +1,5 @@
 'use client'
 
-import { joinProjectAsMember } from '@/actions/project'
 import { Button } from './ui/button'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -14,16 +13,22 @@ export default function JoinProject({ projectId }: { projectId: string }) {
 
   const joinProjectMutation = useMutation({
     mutationFn: async () => {
-      const res = await joinProjectAsMember(projectId)
-      if (res.error) {
-        throw new Error(res.error)
+      const res = await fetch(`/api/projects/${projectId}/join-member`, { method: 'POST' })
+
+      if (!res.ok) {
+        throw new Error('Could not join project')
       }
-      return res
+
+      return await res.json()
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] })
-      router.push(`/project/${projectId}`)
-      toast.success('Joined project successfully')
+    onSuccess: (res) => {
+      if (res.success) {
+        queryClient.invalidateQueries({ queryKey: ['projects'] })
+        router.push(`/project/${projectId}`)
+        toast.success('Joined project successfully')
+      } else {
+        toast.error(res.error)
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message)

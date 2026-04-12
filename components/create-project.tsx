@@ -17,22 +17,33 @@ import { Textarea } from './ui/textarea'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateProjectFormValues, createProjectSchema } from '@/lib/zod-schemas/project'
-import { createProjectAction } from '@/actions/project'
 import { toast } from 'sonner'
 import { useState } from 'react'
-import { authClient } from '@/lib/auth-client'
 import { usePathname } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 export default function CreateProject() {
   const [open, setOpen] = useState(false)
-  const { data: userData } = authClient.useSession()
   const pathname = usePathname()
 
   const queryClient = useQueryClient()
 
   const createProjectMutation = useMutation({
-    mutationFn: (data: CreateProjectFormValues) => createProjectAction(data, userData!.user.id),
+    mutationFn: async (data: CreateProjectFormValues) => {
+      const res = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ data })
+      })
+
+      if (!res.ok) {
+        throw new Error('Could not create project')
+      }
+
+      return await res.json()
+    },
 
     onSuccess: (res) => {
       if (res.success) {
@@ -41,12 +52,12 @@ export default function CreateProject() {
 
         queryClient.invalidateQueries({ queryKey: ['projects'] })
       } else {
-        toast.error(`Project could not be created\n${res.error}`)
+        toast.error(res.error)
       }
     },
 
-    onError: () => {
-      toast.error('Something went wrong')
+    onError: (error: Error) => {
+      toast.error(error.message)
     }
   })
 
@@ -62,7 +73,7 @@ export default function CreateProject() {
     createProjectMutation.mutate(data)
   }
 
-  if (pathname === '/sign-in') return null
+  if (pathname === '/sign-in' || pathname.includes('/invite')) return null
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
