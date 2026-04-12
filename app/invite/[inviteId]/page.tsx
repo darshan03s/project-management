@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation'
 import PageWrapper from '@/components/page-wrapper'
-import { Button } from '@/components/ui/button'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
 import {
@@ -11,6 +10,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Briefcase01Icon, Link } from '@hugeicons/core-free-icons'
+import JoinProject from '@/components/join-project'
 
 export default async function Page({ params }: { params: Promise<{ inviteId: string }> }) {
   const { inviteId } = await params
@@ -77,7 +77,7 @@ export default async function Page({ params }: { params: Promise<{ inviteId: str
         </span>
         <AlertTitle className="text-3xl">Join project</AlertTitle>
         <AlertDescription>You will join project as a member</AlertDescription>
-        <Button>Join</Button>
+        <JoinProject projectId={projectData.id} />
       </Alert>
     </PageWrapper>
   )
