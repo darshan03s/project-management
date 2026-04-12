@@ -129,3 +129,19 @@ export const projectMember = pgTable(
   },
   (table) => [uniqueIndex('project_member_project_user_idx').on(table.projectId, table.userId)]
 )
+
+export const projectInvite = pgTable(
+  'project_invite',
+  {
+    id: text('id').primaryKey(),
+
+    projectId: text('project_id')
+      .notNull()
+      .references(() => project.id, { onDelete: 'cascade' }),
+
+    inviteId: text('invite_id').notNull().unique(),
+
+    createdAt: timestamp('created_at').defaultNow().notNull()
+  },
+  (table) => [index('project_invite_project_id_idx').on(table.projectId)]
+)
