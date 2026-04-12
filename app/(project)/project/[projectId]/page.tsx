@@ -1,6 +1,7 @@
 'use client'
 
 import InviteMembers from '@/components/invite-members'
+import PageWrapper from '@/components/page-wrapper'
 import { buttonVariants } from '@/components/ui/button'
 import { capitalize, cn } from '@/lib/utils'
 import { Project } from '@/types'
@@ -28,9 +29,7 @@ export default function Page() {
   })
 
   if (isLoading) {
-    return (
-      <div className="flex-1 h-[calc(100vh-48px)] flex items-center justify-center">Loading...</div>
-    )
+    return <PageWrapper className="flex-1 flex items-center justify-center">Loading...</PageWrapper>
   }
 
   return (
