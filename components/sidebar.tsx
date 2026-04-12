@@ -120,7 +120,7 @@ export default function Sidebar() {
   if (pathname === '/sign-in') return null
 
   return (
-    <aside className="h-[calc(100vh-48px)] bg-secondary text-secondary-foreground w-60 flex flex-col">
+    <aside className="h-[calc(100vh-48px)] bg-secondary text-secondary-foreground min-w-60 flex flex-col">
       <div className="p-2 pb-0 overflow-y-auto flex-1">
         <ProjectsList projects={projects ?? []} />
       </div>

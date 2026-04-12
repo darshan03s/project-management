@@ -12,3 +12,9 @@ export async function getUserProjects(userId: string) {
     .innerJoin(project, eq(projectMember.projectId, project.id))
     .where(eq(projectMember.userId, userId))
 }
+
+export async function getProjectByProjectId(projectId: string) {
+  const result = await db.select().from(project).where(eq(project.id, projectId)).limit(1)
+
+  return result[0] ?? null
+}
