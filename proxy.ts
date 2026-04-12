@@ -7,6 +7,15 @@ export async function proxy(request: NextRequest) {
     headers: await headers()
   })
 
+  const { pathname } = request.nextUrl
+
+  if (pathname.startsWith('/api')) {
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return NextResponse.next()
+  }
+
   if (!session) {
     return NextResponse.redirect(new URL('/sign-in', request.url))
   }
@@ -15,5 +24,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/invite/:path*']
+  matcher: ['/', '/invite/:path*', '/api/:path*']
 }
