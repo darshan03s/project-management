@@ -29,7 +29,7 @@ export const POST = async (
       .limit(1)
 
     if (existingMember.length > 0) {
-      return { success: true }
+      return NextResponse.json({ success: true })
     }
 
     await db.insert(projectMember).values({

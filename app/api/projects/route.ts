@@ -40,7 +40,7 @@ export const POST = async (req: NextRequest) => {
     const parsed = createProjectSchema.safeParse(data)
 
     if (!parsed.success) {
-      return { error: 'Please enter valid data' }
+      return NextResponse.json({ success: false, error: 'Invalid data' }, { status: 422 })
     }
 
     const { name, description, githubLink } = data

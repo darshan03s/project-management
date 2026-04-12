@@ -3,6 +3,7 @@
 import InviteMembers from '@/components/invite-members'
 import PageWrapper from '@/components/page-wrapper'
 import { buttonVariants } from '@/components/ui/button'
+import { authClient } from '@/lib/auth-client'
 import { capitalize, cn } from '@/lib/utils'
 import { Project } from '@/types'
 import { Github } from '@hugeicons/core-free-icons'
@@ -14,6 +15,8 @@ import { toast } from 'sonner'
 
 export default function Page() {
   const { projectId } = useParams()
+
+  const { data: user } = authClient.useSession()
 
   const { data: project, isLoading } = useQuery({
     queryKey: ['projects', projectId],
@@ -37,7 +40,7 @@ export default function Page() {
       <div className="project-info p-4 space-y-3 w-full">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">{capitalize(project!.name)}</h1>
-          <InviteMembers />
+          {user?.user.id === project?.ownerId ? <InviteMembers /> : null}
         </div>
         <p className="text-xs">{project?.description}</p>
         <div className="flex items-center gap-4">
