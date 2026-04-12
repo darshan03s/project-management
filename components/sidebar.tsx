@@ -10,7 +10,7 @@ import { toast } from 'sonner'
 import { useEffect } from 'react'
 import { Project } from '@/types'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { authClient } from '@/lib/auth-client'
 import { Skeleton } from './ui/skeleton'
@@ -114,10 +114,6 @@ export default function Sidebar() {
       toast.error(error.message)
     }
   }, [error])
-
-  const pathname = usePathname()
-
-  if (pathname === '/sign-in') return null
 
   return (
     <aside className="h-[calc(100vh-48px)] bg-secondary text-secondary-foreground min-w-60 flex flex-col">
