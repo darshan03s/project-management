@@ -34,7 +34,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { Avatar, AvatarFallback } from './ui/avatar'
 import { authClient } from '@/lib/auth-client'
 import { Skeleton } from './ui/skeleton'
 import { Button } from './ui/button'
@@ -77,7 +77,7 @@ const UserAvatar = ({ image, name }: { image: string | null | undefined; name: s
   return (
     <Avatar className="relative h-8 w-8 rounded-lg overflow-hidden">
       {image ? (
-        <Image src={image} alt={name} fill className="object-cover" />
+        <Image src={image} alt={name} className="object-cover" width={500} height={500} />
       ) : (
         <AvatarFallback className="rounded-lg">
           {name
