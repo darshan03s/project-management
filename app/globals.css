@@ -9,6 +9,10 @@ a {
   cursor: pointer;
 }
 
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
 @theme inline {
   --font-heading: var(--font-sans);
   --font-sans: var(--font-sans);

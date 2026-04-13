@@ -14,9 +14,14 @@ export async function getUserProjects(userId: string) {
 }
 
 export async function getProjectByProjectId(projectId: string) {
-  const result = await db.select().from(project).where(eq(project.id, projectId)).limit(1)
+  const result = await db.query.project.findFirst({
+    where: eq(project.id, projectId),
+    with: {
+      owner: true
+    }
+  })
 
-  return result[0] ?? null
+  return result
 }
 
 export async function getInviteByInviteId(inviteId: string) {

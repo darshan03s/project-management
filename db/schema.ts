@@ -145,3 +145,10 @@ export const projectInvite = pgTable(
   },
   (table) => [index('project_invite_project_id_idx').on(table.projectId)]
 )
+
+export const projectRelations = relations(project, ({ one }) => ({
+  owner: one(user, {
+    fields: [project.ownerId],
+    references: [user.id]
+  })
+}))

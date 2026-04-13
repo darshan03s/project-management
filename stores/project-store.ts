@@ -1,8 +1,8 @@
-import { Project } from '@/types'
+import { ProjectWithOwner } from '@/types'
 import { create } from 'zustand'
 
 interface ProjectStore {
-  project: Project | null
+  project: ProjectWithOwner | null
 }
 
 export const useProjectStore = create<ProjectStore>(() => ({
