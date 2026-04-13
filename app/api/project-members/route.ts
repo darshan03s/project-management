@@ -1,5 +1,6 @@
 import { db } from '@/db'
 import { projectMember } from '@/db/schema'
+import { getMembersByProjectId } from '@/db/utils'
 import { auth } from '@/lib/auth'
 import { and, eq } from 'drizzle-orm'
 import { headers } from 'next/headers'
@@ -43,5 +44,21 @@ export const POST = async (req: NextRequest) => {
   } catch (error) {
     console.error('joinProjectAsMember error:', error)
     return NextResponse.json({ success: false, error: 'Could not join project' }, { status: 500 })
+  }
+}
+
+export const GET = async (req: NextRequest) => {
+  const url = new URL(req.nextUrl)
+
+  const projectId = url.searchParams.get('projectId')!
+  try {
+    const members = await getMembersByProjectId(projectId)
+    return NextResponse.json({ success: true, data: { members } })
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json(
+      { success: false, error: 'Failed to get project members' },
+      { status: 500 }
+    )
   }
 }

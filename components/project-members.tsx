@@ -20,7 +20,7 @@ export default function ProjectMembers() {
   const { data: members } = useQuery({
     queryKey: ['members', projectId],
     queryFn: async (): Promise<ProjectMember[]> => {
-      const res = await fetch(`/api/project-members/${projectId}`)
+      const res = await fetch(`/api/project-members?projectId=${projectId}`)
       if (!res.ok) {
         toast.error('Failed to get project members')
       }
