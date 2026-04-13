@@ -13,7 +13,7 @@ export default function JoinProject({ projectId }: { projectId: string }) {
 
   const joinProjectMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch(`/api/projects/${projectId}/join-member`, { method: 'POST' })
+      const res = await fetch(`/api/project-members?projectId=${projectId}`, { method: 'POST' })
 
       if (!res.ok) {
         throw new Error('Could not join project')

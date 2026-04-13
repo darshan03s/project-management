@@ -6,11 +6,11 @@ import { headers } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'node:crypto'
 
-export const POST = async (
-  req: NextRequest,
-  { params }: { params: Promise<{ projectId: string }> }
-) => {
-  const { projectId } = await params
+export const POST = async (req: NextRequest) => {
+  const url = new URL(req.nextUrl)
+
+  const projectId = url.searchParams.get('projectId')!
+
   try {
     const session = await auth.api.getSession({
       headers: await headers()
