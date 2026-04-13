@@ -9,6 +9,7 @@ import { useProjectStore } from '@/stores/project-store'
 import { ProjectWithAdmin } from '@/types'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
+import { useEffect } from 'react'
 import { toast } from 'sonner'
 
 export default function Page() {
@@ -25,10 +26,18 @@ export default function Page() {
       if (!res.ok) toast.error('Could not fetch project')
 
       const json = await res.json()
-      useProjectStore.setState({ project: json.project })
       return json.project
     }
   })
+
+  useEffect(() => {
+    if (!project || !user) return
+
+    useProjectStore.setState({
+      project,
+      isAdmin: project.adminId === user.user.id
+    })
+  }, [project, user])
 
   if (isLoading || !project) {
     return <PageWrapper className="flex-1 flex items-center justify-center">Loading...</PageWrapper>

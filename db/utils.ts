@@ -57,3 +57,10 @@ export async function getMembersByProjectId(projectId: string) {
     .leftJoin(user, eq(projectMember.userId, user.id))
     .where(and(eq(projectMember.projectId, projectId), eq(projectMember.role, 'MEMBER')))
 }
+
+export async function deleteMemberByIdAndProjectId(memberUserId: string, projectId: string) {
+  return await db
+    .delete(projectMember)
+    .where(and(eq(projectMember.projectId, projectId), eq(projectMember.userId, memberUserId)))
+    .returning()
+}
