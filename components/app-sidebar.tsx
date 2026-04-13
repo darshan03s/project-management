@@ -192,7 +192,7 @@ export function AppSidebar() {
 
   const pathname = usePathname()
 
-  if (pathname.startsWith('/sign-in')) return null
+  if (pathname.startsWith('/sign-in') || pathname.startsWith('/invite')) return null
 
   return (
     <Sidebar>
