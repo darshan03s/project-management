@@ -9,14 +9,16 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
-  if (pathname.startsWith('/api')) {
+  if (pathname.startsWith('/api') && !pathname.startsWith('/api/auth')) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     return NextResponse.next()
   }
 
-  if (!session) {
+  const isPublicRoute = pathname === '/sign-in' || pathname.startsWith('/api/auth')
+
+  if (!session && !isPublicRoute) {
     return NextResponse.redirect(new URL('/sign-in', request.url))
   }
 
