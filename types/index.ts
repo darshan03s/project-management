@@ -9,4 +9,4 @@ export type ProjectMember = InferSelectModel<typeof projectMember> & {
   email: string | null
 }
 
-export type ProjectWithOwner = Awaited<ReturnType<typeof getProjectByProjectId>>
+export type ProjectWithAdmin = Awaited<ReturnType<typeof getProjectByProjectId>>

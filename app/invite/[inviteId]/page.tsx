@@ -57,7 +57,7 @@ export default async function Page({ params }: { params: Promise<{ inviteId: str
     )
   }
 
-  if (projectData.ownerId === userId) {
+  if (projectData.adminId === userId) {
     redirect(`/project/${projectData.id}`)
   }
 

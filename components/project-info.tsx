@@ -16,8 +16,8 @@ export default function ProjectInfo() {
       </div>
       <div className="col-span-1 bg-secondary p-4 rounded-md space-y-4">
         <div className="info-piece flex flex-col">
-          <span className="font-bold">Owner</span>
-          <span>{project?.owner.name}</span>
+          <span className="font-bold">Admin</span>
+          <span>{project?.admin.name}</span>
         </div>
         <div className="info-piece flex flex-col">
           <span className="font-bold">Github</span>

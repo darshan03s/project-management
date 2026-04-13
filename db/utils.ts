@@ -17,7 +17,7 @@ export async function getProjectByProjectId(projectId: string) {
   const result = await db.query.project.findFirst({
     where: eq(project.id, projectId),
     with: {
-      owner: true
+      admin: true
     }
   })
 

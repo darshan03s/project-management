@@ -98,7 +98,7 @@ export const project = pgTable('project', {
   name: text('name').notNull(),
   description: text('description'),
 
-  ownerId: text('owner_id')
+  adminId: text('admin_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
 
@@ -123,7 +123,7 @@ export const projectMember = pgTable(
       .notNull()
       .references(() => user.id, { onDelete: 'cascade' }),
 
-    role: text('role', { enum: ['OWNER', 'MEMBER'] }).notNull(),
+    role: text('role', { enum: ['ADMIN', 'MEMBER'] }).notNull(),
 
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
   },
@@ -147,8 +147,8 @@ export const projectInvite = pgTable(
 )
 
 export const projectRelations = relations(project, ({ one }) => ({
-  owner: one(user, {
-    fields: [project.ownerId],
+  admin: one(user, {
+    fields: [project.adminId],
     references: [user.id]
   })
 }))

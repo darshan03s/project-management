@@ -53,14 +53,14 @@ export const POST = async (req: NextRequest) => {
         name: name,
         description: description,
         githubLink: githubLink,
-        ownerId: userId
+        adminId: userId
       })
 
       await tx.insert(projectMember).values({
         id: randomUUID(),
         projectId,
         userId,
-        role: 'OWNER'
+        role: 'ADMIN'
       })
 
       return projectId

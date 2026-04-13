@@ -24,7 +24,7 @@ export const GET = async (
 
     const projectResult = await db
       .select({
-        ownerId: project.ownerId
+        adminId: project.adminId
       })
       .from(project)
       .where(eq(project.id, projectId))
@@ -36,7 +36,7 @@ export const GET = async (
       return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 })
     }
 
-    if (projectData.ownerId !== userId) {
+    if (projectData.adminId !== userId) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
