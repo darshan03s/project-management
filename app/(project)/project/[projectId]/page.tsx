@@ -2,9 +2,11 @@
 
 import InviteMembers from '@/components/invite-members'
 import PageWrapper from '@/components/page-wrapper'
+import ProjectTabs from '@/components/project-tabs'
 import { buttonVariants } from '@/components/ui/button'
 import { authClient } from '@/lib/auth-client'
 import { capitalize, cn } from '@/lib/utils'
+import { useProjectStore } from '@/stores/project-store'
 import { Project } from '@/types'
 import { Github } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -27,11 +29,12 @@ export default function Page() {
       if (!res.ok) toast.error('Could not fetch project')
 
       const json = await res.json()
+      useProjectStore.setState({ project: json.project })
       return json.project
     }
   })
 
-  if (isLoading) {
+  if (isLoading || !project) {
     return <PageWrapper className="flex-1 flex items-center justify-center">Loading...</PageWrapper>
   }
 
@@ -42,8 +45,10 @@ export default function Page() {
           <h1 className="text-2xl font-bold">{capitalize(project!.name)}</h1>
           {user?.user.id === project?.ownerId ? <InviteMembers /> : null}
         </div>
-        <p className="text-xs">{project?.description}</p>
-        <div className="flex items-center gap-4">
+
+        <ProjectTabs />
+
+        {/* <div className="flex items-center gap-4">
           {project?.githubLink && (
             <Link
               href={project.githubLink}
@@ -54,7 +59,7 @@ export default function Page() {
               Github
             </Link>
           )}
-        </div>
+        </div> */}
       </div>
     </div>
   )
