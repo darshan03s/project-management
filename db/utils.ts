@@ -1,5 +1,5 @@
 import { db } from '@/db'
-import { project, projectInvite, projectMember } from '@/db/schema'
+import { project, projectInvite, projectMember, user } from '@/db/schema'
 import { and, eq } from 'drizzle-orm'
 
 export async function getUserProjects(userId: string) {
@@ -40,4 +40,20 @@ export async function getMemberByProjectIdAndUserId(projectId: string, userId: s
     .from(projectMember)
     .where(and(eq(projectMember.projectId, projectId), eq(projectMember.userId, userId)))
     .limit(1)
+}
+
+export async function getMembersByProjectId(projectId: string) {
+  return await db
+    .select({
+      id: projectMember.id,
+      projectId: projectMember.projectId,
+      userId: user.id,
+      role: projectMember.role,
+      createdAt: projectMember.createdAt,
+      name: user.name,
+      email: user.email
+    })
+    .from(projectMember)
+    .leftJoin(user, eq(projectMember.userId, user.id))
+    .where(and(eq(projectMember.projectId, projectId), eq(projectMember.role, 'MEMBER')))
 }

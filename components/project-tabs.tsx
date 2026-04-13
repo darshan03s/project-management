@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ProjectInfo from './project-info'
+import ProjectMembers from './project-members'
 
 export default function ProjectTabs() {
   return (
@@ -13,7 +14,9 @@ export default function ProjectTabs() {
       <TabsContent value="info">
         <ProjectInfo />
       </TabsContent>
-      <TabsContent value="members">Todo</TabsContent>
+      <TabsContent value="members">
+        <ProjectMembers />
+      </TabsContent>
       <TabsContent value="tasks">Todo</TabsContent>
       <TabsContent value="board">Todo</TabsContent>
     </Tabs>
