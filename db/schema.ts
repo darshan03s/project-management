@@ -125,7 +125,7 @@ export const projectMember = pgTable(
 
     role: text('role', { enum: ['OWNER', 'MEMBER'] }).notNull(),
 
-    createdAt: timestamp('created_at').defaultNow().notNull()
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
   },
   (table) => [uniqueIndex('project_member_project_user_idx').on(table.projectId, table.userId)]
 )
