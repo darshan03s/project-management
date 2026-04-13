@@ -7,6 +7,8 @@ import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import Header from '@/components/header'
 import Providers from '@/components/providers'
+import { SidebarProvider } from '@/components/ui/sidebar'
+import { AppSidebar } from '@/components/app-sidebar'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
@@ -51,8 +53,13 @@ export default function RootLayout({
         >
           <TooltipProvider>
             <Providers>
-              <Header />
-              {children}
+              <SidebarProvider>
+                <AppSidebar />
+                <div className="flex-1">
+                  <Header />
+                  {children}
+                </div>
+              </SidebarProvider>
             </Providers>
           </TooltipProvider>
           <Toaster />
