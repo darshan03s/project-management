@@ -1,16 +1,14 @@
-import { deleteMemberByIdAndProjectId } from '@/db/utils'
+import { deleteMemberById } from '@/db/utils'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const DELETE = async (
   req: NextRequest,
-  { params }: { params: Promise<{ memberUserId: string }> }
+  { params }: { params: Promise<{ memberId: string }> }
 ) => {
-  const { memberUserId } = await params
-  const url = new URL(req.nextUrl)
-  const projectId = url.searchParams.get('projectId')!
+  const { memberId } = await params
 
   try {
-    const deleted = await deleteMemberByIdAndProjectId(memberUserId, projectId)
+    const deleted = await deleteMemberById(memberId)
     if (!deleted.length) {
       return NextResponse.json(
         { success: false, error: 'Member not found or already removed' },

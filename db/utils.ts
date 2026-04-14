@@ -58,9 +58,6 @@ export async function getMembersByProjectId(projectId: string) {
     .where(and(eq(projectMember.projectId, projectId), eq(projectMember.role, 'MEMBER')))
 }
 
-export async function deleteMemberByIdAndProjectId(memberUserId: string, projectId: string) {
-  return await db
-    .delete(projectMember)
-    .where(and(eq(projectMember.projectId, projectId), eq(projectMember.userId, memberUserId)))
-    .returning()
+export async function deleteMemberById(memberId: string) {
+  return await db.delete(projectMember).where(eq(projectMember.id, memberId)).returning()
 }

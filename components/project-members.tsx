@@ -40,8 +40,8 @@ export default function ProjectMembers() {
   })
 
   const removeMemberMutation = useMutation({
-    mutationFn: async (memberUserId: string) => {
-      const res = await fetch(`/api/project-members/${memberUserId}?projectId=${projectId}`, {
+    mutationFn: async (memberId: string) => {
+      const res = await fetch(`/api/project-members/${memberId}`, {
         method: 'DELETE'
       })
 
@@ -68,8 +68,8 @@ export default function ProjectMembers() {
     }
   })
 
-  function handleRemoveMember(memberUserId: string) {
-    removeMemberMutation.mutate(memberUserId)
+  function handleRemoveMember(memberId: string) {
+    removeMemberMutation.mutate(memberId)
   }
 
   const tableBodyRows = members?.map((member) => {
@@ -84,7 +84,7 @@ export default function ProjectMembers() {
             <Button
               variant={'destructive'}
               size={'icon-sm'}
-              onClick={() => handleRemoveMember(member.userId)}
+              onClick={() => handleRemoveMember(member.id)}
             >
               <HugeiconsIcon icon={Trash} />
             </Button>

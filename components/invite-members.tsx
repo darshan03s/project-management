@@ -24,7 +24,7 @@ export default function InviteMembers() {
 
   const createInviteMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch(`/api/projects/${projectId}/create-invite`)
+      const res = await fetch(`/api/project-invites/?projectId=${projectId}`, { method: 'POST' })
 
       if (!res.ok) {
         throw new Error('Could not create invite')
