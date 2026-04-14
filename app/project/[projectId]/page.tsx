@@ -17,16 +17,26 @@ export default function Page() {
 
   const { data: user } = authClient.useSession()
 
-  const { data: project, isLoading } = useQuery({
+  const {
+    data: project,
+    isLoading,
+    error
+  } = useQuery({
     queryKey: ['projects', projectId],
     enabled: !!projectId,
     queryFn: async (): Promise<ProjectWithAdmin> => {
       const res = await fetch(`/api/projects/${projectId}`)
 
-      if (!res.ok) toast.error('Could not fetch project')
+      if (res.status === 403) {
+        throw new Error('FORBIDDEN')
+      }
+
+      if (!res.ok) {
+        throw new Error('FAILED')
+      }
 
       const json = await res.json()
-      return json.project
+      return json.data.project
     }
   })
 
@@ -39,7 +49,19 @@ export default function Page() {
     })
   }, [project, user])
 
-  if (isLoading || !project) {
+  useEffect(() => {
+    if (error instanceof Error && error.message === 'FORBIDDEN') {
+      toast.error('Access denied')
+    }
+  }, [error])
+
+  if (error instanceof Error && error.message === 'FORBIDDEN') {
+    return (
+      <PageWrapper className="flex-1 flex items-center justify-center">Access denied</PageWrapper>
+    )
+  }
+
+  if (isLoading) {
     return <PageWrapper className="flex-1 flex items-center justify-center">Loading...</PageWrapper>
   }
 
