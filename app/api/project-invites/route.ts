@@ -1,68 +1,29 @@
-import { db } from '@/db'
-import { project, projectInvite } from '@/db/schema'
-import { auth } from '@/lib/auth'
-import { eq } from 'drizzle-orm'
-import { headers } from 'next/headers'
+import { addProjectInvite, getProjectInvite } from '@/db/utils'
+import { withErrorHandler } from '@/lib/error-handler'
+import { requireAdmin, requireAuth } from '@/lib/guards'
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'node:crypto'
 
-export const POST = async (req: NextRequest) => {
+export const POST = withErrorHandler(async function (req: NextRequest) {
+  const user = await requireAuth()
+
   const url = new URL(req.nextUrl)
   const projectId = url.searchParams.get('projectId')!
 
-  try {
-    const session = await auth.api.getSession({
-      headers: await headers()
+  await requireAdmin(projectId, user.id)
+
+  const existingInvite = await getProjectInvite(projectId)
+
+  if (existingInvite.length > 0) {
+    return NextResponse.json({
+      success: true,
+      data: { inviteId: existingInvite[0].inviteId }
     })
-
-    if (!session) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const userId = session.user.id
-
-    const projectResult = await db
-      .select({
-        adminId: project.adminId
-      })
-      .from(project)
-      .where(eq(project.id, projectId))
-      .limit(1)
-
-    const projectData = projectResult[0]
-
-    if (!projectData) {
-      return NextResponse.json({ success: false, error: 'Project not found' }, { status: 404 })
-    }
-
-    if (projectData.adminId !== userId) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const existingInvite = await db
-      .select()
-      .from(projectInvite)
-      .where(eq(projectInvite.projectId, projectId))
-      .limit(1)
-
-    if (existingInvite.length > 0) {
-      return NextResponse.json({
-        success: true,
-        data: { inviteId: existingInvite[0].inviteId }
-      })
-    }
-
-    const inviteId = randomUUID()
-
-    await db.insert(projectInvite).values({
-      id: randomUUID(),
-      projectId,
-      inviteId
-    })
-
-    return NextResponse.json({ success: true, data: { inviteId: inviteId } })
-  } catch (error) {
-    console.error('generateInviteLink error:', error)
-    return NextResponse.json({ success: false, error: 'Could not create invite' }, { status: 500 })
   }
-}
+
+  const inviteId = randomUUID()
+
+  await addProjectInvite(inviteId, projectId)
+
+  return NextResponse.json({ success: true, data: { inviteId: inviteId } })
+})

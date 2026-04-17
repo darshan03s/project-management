@@ -180,7 +180,7 @@ export function AppSidebar() {
       }
 
       const json = await res.json()
-      return json.data
+      return json.data.projects
     }
   })
 

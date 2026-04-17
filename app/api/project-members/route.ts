@@ -1,64 +1,30 @@
-import { db } from '@/db'
-import { projectMember } from '@/db/schema'
-import { getMembersByProjectId } from '@/db/utils'
-import { auth } from '@/lib/auth'
-import { and, eq } from 'drizzle-orm'
-import { headers } from 'next/headers'
+import { addProjectMember, getMembersByProjectId, getProjectMember } from '@/db/utils'
+import { withErrorHandler } from '@/lib/error-handler'
+import { requireAuth } from '@/lib/guards'
 import { NextRequest, NextResponse } from 'next/server'
-import { randomUUID } from 'node:crypto'
 
-export const POST = async (req: NextRequest) => {
+export const POST = withErrorHandler(async function (req: NextRequest) {
+  const user = await requireAuth()
+
   const url = new URL(req.nextUrl)
-
   const projectId = url.searchParams.get('projectId')!
 
-  try {
-    const session = await auth.api.getSession({
-      headers: await headers()
-    })
+  const existingMember = await getProjectMember(user.id, projectId)
 
-    if (!session) {
-      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const userId = session.user.id
-
-    const existingMember = await db
-      .select()
-      .from(projectMember)
-      .where(and(eq(projectMember.userId, userId), eq(projectMember.projectId, projectId)))
-      .limit(1)
-
-    if (existingMember.length > 0) {
-      return NextResponse.json({ success: true })
-    }
-
-    await db.insert(projectMember).values({
-      id: randomUUID(),
-      userId,
-      projectId,
-      role: 'MEMBER'
-    })
-
+  if (existingMember.length > 0) {
     return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('joinProjectAsMember error:', error)
-    return NextResponse.json({ success: false, error: 'Could not join project' }, { status: 500 })
   }
-}
 
-export const GET = async (req: NextRequest) => {
+  await addProjectMember(user.id, projectId)
+
+  return NextResponse.json({ success: true })
+})
+
+export const GET = async function (req: NextRequest) {
   const url = new URL(req.nextUrl)
-
   const projectId = url.searchParams.get('projectId')!
-  try {
-    const members = await getMembersByProjectId(projectId)
-    return NextResponse.json({ success: true, data: { members } })
-  } catch (error) {
-    console.error(error)
-    return NextResponse.json(
-      { success: false, error: 'Failed to get project members' },
-      { status: 500 }
-    )
-  }
+
+  const members = await getMembersByProjectId(projectId)
+
+  return NextResponse.json({ success: true, data: { members } })
 }

@@ -41,7 +41,7 @@ export default function ProjectMembers() {
 
   const removeMemberMutation = useMutation({
     mutationFn: async (memberId: string) => {
-      const res = await fetch(`/api/project-members/${memberId}`, {
+      const res = await fetch(`/api/project-members/${memberId}?projectId=${projectId}`, {
         method: 'DELETE'
       })
 
