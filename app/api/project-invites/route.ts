@@ -1,16 +1,16 @@
 import { addProjectInvite, getProjectInvite } from '@/db/utils'
 import { withErrorHandler } from '@/lib/error-handler'
-import { requireAdmin, requireAuth } from '@/lib/guards'
+import { requireAdmin } from '@/lib/guards'
 import { NextRequest, NextResponse } from 'next/server'
 import { randomUUID } from 'node:crypto'
 
 export const POST = withErrorHandler(async function (req: NextRequest) {
-  const user = await requireAuth()
+  const userId = req.headers.get('x-user-id')!
 
   const url = new URL(req.nextUrl)
   const projectId = url.searchParams.get('projectId')!
 
-  await requireAdmin(projectId, user.id)
+  await requireAdmin(projectId, userId)
 
   const existingInvite = await getProjectInvite(projectId)
 

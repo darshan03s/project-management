@@ -1,19 +1,19 @@
 import { deleteMemberById } from '@/db/utils'
 import { withErrorHandler } from '@/lib/error-handler'
 import { AppError, NotFoundError } from '@/lib/errors'
-import { requireAdmin, requireAuth } from '@/lib/guards'
+import { requireAdmin } from '@/lib/guards'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const DELETE = withErrorHandler(async function (
   req: NextRequest,
   { params }: { params: Promise<{ memberId: string }> }
 ) {
-  const user = await requireAuth()
+  const userId = req.headers.get('x-user-id')!
 
   const url = new URL(req.nextUrl)
   const projectId = url.searchParams.get('projectId')!
 
-  await requireAdmin(user.id, projectId)
+  await requireAdmin(userId, projectId)
 
   const { memberId } = await params
 

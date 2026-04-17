@@ -111,8 +111,6 @@ const User = () => {
 
   const user = data!.user
 
-  console.log('image', user.image)
-
   async function handleSignOut() {
     await authClient.signOut()
     router.push('/sign-in')

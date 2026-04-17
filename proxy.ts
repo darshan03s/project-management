@@ -13,7 +13,18 @@ export async function proxy(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    return NextResponse.next()
+
+    const requestHeaders = new Headers(request.headers)
+
+    requestHeaders.set('x-user-id', String(session.user.id))
+    requestHeaders.set('x-user-email', session.user.email)
+    requestHeaders.set('x-user-name', session.user.name)
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders
+      }
+    })
   }
 
   const isPublicRoute = pathname === '/sign-in' || pathname.startsWith('/api/auth')

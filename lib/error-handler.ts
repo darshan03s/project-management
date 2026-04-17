@@ -7,6 +7,7 @@ export function withErrorHandler<T extends (...args: any[]) => any>(fn: T) {
       return await fn(...args)
     } catch (error) {
       if (error instanceof AppError) {
+        console.log(error)
         return NextResponse.json(
           { error: error.message, code: error.customCode, success: false },
           { status: error.statusCode }
