@@ -1,4 +1,4 @@
-import { deleteMemberById } from '@/db/utils'
+import { ProjectMember } from '@/lib/db/project-member'
 import { withErrorHandler } from '@/lib/error-handler'
 import { AppError, NotFoundError } from '@/lib/errors'
 import { requireAdmin } from '@/lib/guards'
@@ -18,7 +18,7 @@ export const DELETE = withErrorHandler(async function (
   const { memberId } = await params
 
   try {
-    const deleted = await deleteMemberById(memberId)
+    const deleted = await ProjectMember.deleteById(memberId)
     if (!deleted.length) {
       throw new NotFoundError('Member not found or already removed', 'MEMBER_NOT_FOUND')
     }

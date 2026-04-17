@@ -1,15 +1,13 @@
-import { createProject, getUserProjects } from '@/db/utils'
+import { Project } from '@/lib/db/project'
 import { withErrorHandler } from '@/lib/error-handler'
 import { createProjectSchema } from '@/lib/zod-schemas/project'
 import { NextRequest, NextResponse } from 'next/server'
-import { randomUUID } from 'node:crypto'
 
 export const revalidate = 0
 
 export const GET = withErrorHandler(async function (req: NextRequest) {
   const userId = req.headers.get('x-user-id')!
-  console.log({ userId })
-  const projects = await getUserProjects(userId)
+  const projects = await Project.getByUserId(userId)
   return NextResponse.json({ success: true, data: { projects } })
 })
 
@@ -27,7 +25,7 @@ export const POST = withErrorHandler(async function (req: NextRequest) {
 
   const { name, description, githubLink } = data
 
-  const result = await createProject(userId, randomUUID(), name, description, githubLink)
+  const result = await Project.create(userId, name, description, githubLink)
 
   return NextResponse.json({ success: true, data: { projectId: result } })
 })

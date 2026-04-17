@@ -1,4 +1,4 @@
-import { addProjectMember, getMembersByProjectId, getProjectMember } from '@/db/utils'
+import { ProjectMember } from '@/lib/db/project-member'
 import { withErrorHandler } from '@/lib/error-handler'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -8,13 +8,13 @@ export const POST = withErrorHandler(async function (req: NextRequest) {
   const url = new URL(req.nextUrl)
   const projectId = url.searchParams.get('projectId')!
 
-  const existingMember = await getProjectMember(userId, projectId)
+  const existingMember = await ProjectMember.getByProjectIdAndUserId(userId, projectId)
 
   if (existingMember.length > 0) {
     return NextResponse.json({ success: true })
   }
 
-  await addProjectMember(userId, projectId)
+  await ProjectMember.add(userId, projectId)
 
   return NextResponse.json({ success: true })
 })
@@ -23,7 +23,7 @@ export const GET = async function (req: NextRequest) {
   const url = new URL(req.nextUrl)
   const projectId = url.searchParams.get('projectId')!
 
-  const members = await getMembersByProjectId(projectId)
+  const members = await ProjectMember.getAllByProjectId(projectId)
 
   return NextResponse.json({ success: true, data: { members } })
 }

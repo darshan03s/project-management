@@ -1,4 +1,4 @@
-import { addProjectInvite, getProjectInvite } from '@/db/utils'
+import { ProjectInvite } from '@/lib/db/project-invite'
 import { withErrorHandler } from '@/lib/error-handler'
 import { requireAdmin } from '@/lib/guards'
 import { NextRequest, NextResponse } from 'next/server'
@@ -12,7 +12,7 @@ export const POST = withErrorHandler(async function (req: NextRequest) {
 
   await requireAdmin(projectId, userId)
 
-  const existingInvite = await getProjectInvite(projectId)
+  const existingInvite = await ProjectInvite.getByProjectId(projectId)
 
   if (existingInvite.length > 0) {
     return NextResponse.json({
@@ -23,7 +23,7 @@ export const POST = withErrorHandler(async function (req: NextRequest) {
 
   const inviteId = randomUUID()
 
-  await addProjectInvite(inviteId, projectId)
+  await ProjectInvite.add(inviteId, projectId)
 
   return NextResponse.json({ success: true, data: { inviteId: inviteId } })
 })

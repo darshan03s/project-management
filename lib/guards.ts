@@ -3,7 +3,7 @@
 import { headers } from 'next/headers'
 import { auth } from './auth'
 import { NotFoundError, UnauthorizedError } from './errors'
-import { getProjectByProjectId } from '@/db/utils'
+import { Project } from './db/project'
 
 export const requireAuth = async () => {
   const session = await auth.api.getSession({
@@ -18,7 +18,7 @@ export const requireAuth = async () => {
 }
 
 export const requireProject = async (projectId: string) => {
-  const projectData = await getProjectByProjectId(projectId)
+  const projectData = await Project.getById(projectId)
 
   if (!projectData) {
     throw new NotFoundError('Project not found', 'PROJECT_NOT_FOUND')
@@ -27,7 +27,7 @@ export const requireProject = async (projectId: string) => {
   return projectData
 }
 
-export const requireAdmin = async (projectId: string, userId: string) => {
+export const requireAdmin = async (userId: string, projectId: string) => {
   const projectData = await requireProject(projectId)
 
   if (projectData.adminId !== userId) {
