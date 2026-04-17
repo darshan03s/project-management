@@ -20,7 +20,6 @@ import Brand from './brand'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { ArrowUp01Icon, ChevronDown, Login01Icon, Logout01Icon } from '@hugeicons/core-free-icons'
-import { useQuery } from '@tanstack/react-query'
 import { Project } from '@/types'
 import { toast } from 'sonner'
 import { useEffect } from 'react'
@@ -39,6 +38,7 @@ import { authClient } from '@/lib/auth-client'
 import { Skeleton } from './ui/skeleton'
 import { Button } from './ui/button'
 import Image from 'next/image'
+import { useProjects } from '@/lib/api/project/queries'
 
 const ProjectsList = ({ projects }: { projects: Project[] }) => {
   return (
@@ -103,7 +103,7 @@ const User = () => {
 
   if (!isPending && !data) {
     return (
-      <Button className="w-fu">
+      <Button className="w-full">
         <HugeiconsIcon icon={Login01Icon} /> Sign in
       </Button>
     )
@@ -166,21 +166,7 @@ const User = () => {
 }
 
 export function AppSidebar() {
-  const { data: projects, error } = useQuery({
-    queryKey: ['projects'],
-    queryFn: async (): Promise<Project[]> => {
-      const res = await fetch('/api/projects', {
-        cache: 'no-store'
-      })
-
-      if (!res.ok) {
-        toast.error('Failed to fetch projects')
-      }
-
-      const json = await res.json()
-      return json.data.projects
-    }
-  })
+  const { data: projects, error } = useProjects()
 
   useEffect(() => {
     if (error) {

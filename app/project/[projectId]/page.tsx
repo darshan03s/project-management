@@ -3,11 +3,10 @@
 import InviteMembers from '@/components/invite-members'
 import PageWrapper from '@/components/page-wrapper'
 import ProjectTabs from '@/components/project-tabs'
+import { useProject } from '@/lib/api/project/queries'
 import { authClient } from '@/lib/auth-client'
 import { capitalize } from '@/lib/utils'
 import { useProjectStore } from '@/stores/project-store'
-import { ProjectWithAdmin } from '@/types'
-import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { toast } from 'sonner'
@@ -17,28 +16,7 @@ export default function Page() {
 
   const { data: user } = authClient.useSession()
 
-  const {
-    data: project,
-    isLoading,
-    error
-  } = useQuery({
-    queryKey: ['projects', projectId],
-    enabled: !!projectId,
-    queryFn: async (): Promise<ProjectWithAdmin> => {
-      const res = await fetch(`/api/projects/${projectId}`)
-
-      if (res.status === 403) {
-        throw new Error('FORBIDDEN')
-      }
-
-      if (!res.ok) {
-        throw new Error('FAILED')
-      }
-
-      const json = await res.json()
-      return json.data.project
-    }
-  })
+  const { data: project, isLoading, error } = useProject(projectId as string)
 
   useEffect(() => {
     if (!project || !user) return

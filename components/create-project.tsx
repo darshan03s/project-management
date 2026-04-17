@@ -20,46 +20,13 @@ import { CreateProjectFormValues, createProjectSchema } from '@/lib/zod-schemas/
 import { toast } from 'sonner'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCreateProject } from '@/lib/api/project/mutations'
 
 export default function CreateProject() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
 
-  const queryClient = useQueryClient()
-
-  const createProjectMutation = useMutation({
-    mutationFn: async (data: CreateProjectFormValues) => {
-      const res = await fetch('/api/projects', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ data })
-      })
-
-      if (!res.ok) {
-        throw new Error('Could not create project')
-      }
-
-      return await res.json()
-    },
-
-    onSuccess: (res) => {
-      if (res.success) {
-        toast.success('Project created successfully')
-        setOpen(false)
-
-        queryClient.invalidateQueries({ queryKey: ['projects'] })
-      } else {
-        toast.error(res.error)
-      }
-    },
-
-    onError: (error: Error) => {
-      toast.error(error.message)
-    }
-  })
+  const createProjectMutation = useCreateProject()
 
   const {
     register,
@@ -70,7 +37,20 @@ export default function CreateProject() {
   })
 
   const onSubmit = async (data: CreateProjectFormValues) => {
-    createProjectMutation.mutate(data)
+    createProjectMutation.mutate(data, {
+      onSuccess: (res) => {
+        if (res.success) {
+          toast.success('Project created successfully')
+          setOpen(false)
+        } else {
+          toast.error(res.error)
+        }
+      },
+
+      onError: (error: Error) => {
+        toast.error(error.message)
+      }
+    })
   }
 
   if (pathname === '/sign-in' || pathname.includes('/invite')) return null

@@ -3,8 +3,6 @@ import { withErrorHandler } from '@/lib/error-handler'
 import { createProjectSchema } from '@/lib/zod-schemas/project'
 import { NextRequest, NextResponse } from 'next/server'
 
-export const revalidate = 0
-
 export const GET = withErrorHandler(async function (req: NextRequest) {
   const userId = req.headers.get('x-user-id')!
   const projects = await Project.getByUserId(userId)
