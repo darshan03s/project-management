@@ -10,7 +10,7 @@ export const POST = withErrorHandler(async function (req: NextRequest) {
   const url = new URL(req.nextUrl)
   const projectId = url.searchParams.get('projectId')!
 
-  await requireAdmin(projectId, userId)
+  await requireAdmin(userId, projectId)
 
   const existingInvite = await ProjectInvite.getByProjectId(projectId)
 

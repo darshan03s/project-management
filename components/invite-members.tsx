@@ -16,38 +16,31 @@ import { Input } from './ui/input'
 import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import { toast } from 'sonner'
-import { useMutation } from '@tanstack/react-query'
+import { useCreateProjectInvite } from '@/lib/api/project-invite/mutations'
 
 export default function InviteMembers() {
-  const [inviteLink, setInViteLink] = useState('')
+  const [inviteLink, setInviteLink] = useState('')
   const { projectId } = useParams()
 
-  const createInviteMutation = useMutation({
-    mutationFn: async () => {
-      const res = await fetch(`/api/project-invites/?projectId=${projectId}`, { method: 'POST' })
-
-      if (!res.ok) {
-        throw new Error('Could not create invite')
-      }
-
-      return await res.json()
-    },
-    onSuccess: (res) => {
-      if (res.success) {
-        const inviteId = res.data.inviteId as string
-        const link = `${process.env.NEXT_PUBLIC_BASE_URL}/invite/${inviteId}`
-        setInViteLink(link)
-      } else {
-        toast.error(res.error)
-      }
-    },
-    onError: (error: Error) => {
-      toast.error(error.message)
-    }
-  })
+  const createInvite = useCreateProjectInvite()
 
   async function handleInvite() {
-    createInviteMutation.mutate()
+    createInvite.mutate(projectId as string, {
+      onSuccess: (res) => {
+        if (res.success) {
+          const inviteId = res.data!.inviteId
+          const link = `${process.env.NEXT_PUBLIC_BASE_URL}/invite/${inviteId}`
+
+          setInviteLink(link)
+        } else {
+          toast.error(res.error)
+        }
+      },
+
+      onError: (error: Error) => {
+        toast.error(error.message)
+      }
+    })
   }
 
   function handleCopyInviteLink() {

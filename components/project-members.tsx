@@ -9,67 +9,34 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { useProjectStore } from '@/stores/project-store'
-import { ProjectMember } from '@/types'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { Button } from './ui/button'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Trash } from '@hugeicons/core-free-icons'
+import { useProjectMembers } from '@/lib/api/project-member/queries'
+import { useRemoveProjectMember } from '@/lib/api/project-member/mutations'
 
 export default function ProjectMembers() {
   const project = useProjectStore((s) => s.project)
   const isAdmin = useProjectStore((s) => s.isAdmin)
   const projectId = project!.id
 
-  const queryClient = useQueryClient()
+  const { data: members } = useProjectMembers(projectId)
 
-  const { data: members } = useQuery({
-    queryKey: ['members', projectId],
-    queryFn: async (): Promise<ProjectMember[]> => {
-      const res = await fetch(`/api/project-members?projectId=${projectId}`)
-      if (!res.ok) {
-        toast.error('Failed to get project members')
-      }
-      const json = await res.json()
-      if (json.error) {
-        toast.error(json.error)
-      }
-
-      return json.data.members
-    }
-  })
-
-  const removeMemberMutation = useMutation({
-    mutationFn: async (memberId: string) => {
-      const res = await fetch(`/api/project-members/${memberId}?projectId=${projectId}`, {
-        method: 'DELETE'
-      })
-
-      if (!res.ok) {
-        throw new Error('Could not remove member')
-      }
-
-      const json = await res.json()
-
-      if (json.error) {
-        toast.error(json.error)
-      }
-
-      return json
-    },
-    onSuccess: () => {
-      toast.success('Removed member')
-      queryClient.invalidateQueries({
-        queryKey: ['members', projectId]
-      })
-    },
-    onError: (error: Error) => {
-      toast.error(error.message)
-    }
-  })
+  const removeMember = useRemoveProjectMember()
 
   function handleRemoveMember(memberId: string) {
-    removeMemberMutation.mutate(memberId)
+    removeMember.mutate(
+      { memberId, projectId },
+      {
+        onSuccess: () => {
+          toast.success('Removed member')
+        },
+        onError: (error: Error) => {
+          toast.error(error.message)
+        }
+      }
+    )
   }
 
   const tableBodyRows = members?.map((member) => {

@@ -2,15 +2,13 @@ import { redirect } from 'next/navigation'
 import PageWrapper from '@/components/page-wrapper'
 import { auth } from '@/lib/auth'
 import { headers } from 'next/headers'
-import {
-  getInviteByInviteId,
-  getMemberByProjectIdAndUserId,
-  getProjectByProjectId
-} from '@/db/utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { HugeiconsIcon } from '@hugeicons/react'
 import { Briefcase01Icon, Link } from '@hugeicons/core-free-icons'
 import JoinProject from '@/components/join-project'
+import { ProjectInvite } from '@/lib/db/project-invite'
+import { Project } from '@/lib/db/project'
+import { ProjectMember } from '@/lib/db/project-member'
 
 export default async function Page({ params }: { params: Promise<{ inviteId: string }> }) {
   const { inviteId } = await params
@@ -25,7 +23,7 @@ export default async function Page({ params }: { params: Promise<{ inviteId: str
 
   const userId = session.user.id
 
-  const invite = await getInviteByInviteId(inviteId)
+  const invite = await ProjectInvite.getByInviteId(inviteId)
 
   if (!invite) {
     return (
@@ -41,7 +39,7 @@ export default async function Page({ params }: { params: Promise<{ inviteId: str
     )
   }
 
-  const projectData = await getProjectByProjectId(invite.projectId)
+  const projectData = await Project.getById(invite.projectId)
 
   if (!projectData) {
     return (
@@ -61,7 +59,7 @@ export default async function Page({ params }: { params: Promise<{ inviteId: str
     redirect(`/project/${projectData.id}`)
   }
 
-  const memberRes = await getMemberByProjectIdAndUserId(projectData.id, userId)
+  const memberRes = await ProjectMember.getByProjectIdAndUserId(projectData.id, userId)
 
   const isMember = memberRes.length > 0
 
