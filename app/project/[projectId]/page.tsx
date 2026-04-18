@@ -39,7 +39,7 @@ export default function Page() {
     )
   }
 
-  if (isLoading) {
+  if (isLoading || !project) {
     return <PageWrapper className="flex-1 flex items-center justify-center">Loading...</PageWrapper>
   }
 

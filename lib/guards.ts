@@ -2,8 +2,9 @@
 
 import { headers } from 'next/headers'
 import { auth } from './auth'
-import { NotFoundError, UnauthorizedError } from './errors'
+import { ForbiddenError, NotFoundError, UnauthorizedError } from './errors'
 import { Project } from './db/project'
+import { ProjectMember } from './db/project-member'
 
 export const requireAuth = async () => {
   const session = await auth.api.getSession({
@@ -32,6 +33,22 @@ export const requireAdmin = async (userId: string, projectId: string) => {
 
   if (projectData.adminId !== userId) {
     throw new UnauthorizedError('Unauthorized', 'NOT_ADMIN')
+  }
+
+  return projectData
+}
+
+export const requireProjectAccess = async (userId: string, projectId: string) => {
+  const projectData = await requireProject(projectId)
+
+  if (projectData.adminId === userId) {
+    return projectData
+  }
+
+  const member = await ProjectMember.getByProjectIdAndUserId(projectId, userId)
+
+  if (member.length === 0) {
+    throw new ForbiddenError('Access denied')
   }
 
   return projectData

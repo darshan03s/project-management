@@ -15,7 +15,8 @@ export const getProjectRequest = async (id: string) => {
   const res = await fetch(`/api/projects/${id}`)
 
   if (!res.ok) {
-    throw new Error('Failed to get project')
+    const err = await res.json()
+    throw new Error(err.code || 'UNKNOWN_ERROR')
   }
 
   const json = await res.json()

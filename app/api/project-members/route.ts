@@ -1,5 +1,6 @@
 import { ProjectMember } from '@/lib/db/project-member'
 import { withErrorHandler } from '@/lib/error-handler'
+import { requireProjectAccess } from '@/lib/guards'
 import { NextRequest, NextResponse } from 'next/server'
 
 export const POST = withErrorHandler(async function (req: NextRequest) {
@@ -19,11 +20,15 @@ export const POST = withErrorHandler(async function (req: NextRequest) {
   return NextResponse.json({ success: true })
 })
 
-export const GET = async function (req: NextRequest) {
+export const GET = withErrorHandler(async function (req: NextRequest) {
   const url = new URL(req.nextUrl)
   const projectId = url.searchParams.get('projectId')!
+
+  const userId = req.headers.get('x-user-id')!
+
+  await requireProjectAccess(userId, projectId)
 
   const members = await ProjectMember.getAllByProjectId(projectId)
 
   return NextResponse.json({ success: true, data: { members } })
-}
+})
