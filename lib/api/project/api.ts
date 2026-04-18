@@ -1,4 +1,4 @@
-import { Project } from '@/types'
+import { CreateProjectFormValues } from '@/lib/zod-schemas/project'
 
 export const getProjectsRequest = async () => {
   const res = await fetch('/api/projects')
@@ -23,7 +23,7 @@ export const getProjectRequest = async (id: string) => {
   return json.data.project
 }
 
-export const createProjectRequest = async (data: Project) => {
+export const createProjectRequest = async (data: CreateProjectFormValues) => {
   const res = await fetch('/api/projects', {
     method: 'POST',
     headers: {
