@@ -172,17 +172,19 @@ const User = () => {
 }
 
 export function AppSidebar() {
-  const { data: projects, error } = useProjects()
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error.message)
-    }
-  }, [error])
-
   const pathname = usePathname()
 
-  if (pathname.startsWith('/sign-in') || pathname.startsWith('/invite')) return null
+  const shouldFetchProjects = !pathname.startsWith('/sign-in') && !pathname.startsWith('/invite')
+
+  const { data: projects, error } = useProjects({
+    enabled: shouldFetchProjects
+  })
+
+  useEffect(() => {
+    toast.error(error?.message)
+  }, [error])
+
+  if (!shouldFetchProjects) return null
 
   return (
     <Sidebar>

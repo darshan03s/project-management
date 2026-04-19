@@ -2,9 +2,14 @@ import { useQuery } from '@tanstack/react-query'
 import { projectKeys } from './keys'
 import { getProjectRequest, getProjectsRequest } from './api'
 
-export const useProjects = () => {
+type UseProjectsOptions = {
+  enabled?: boolean
+}
+
+export const useProjects = (options?: UseProjectsOptions) => {
   return useQuery({
     queryKey: projectKeys.all,
+    enabled: options?.enabled ?? true,
     queryFn: () => getProjectsRequest()
   })
 }
