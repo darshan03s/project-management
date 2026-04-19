@@ -41,6 +41,12 @@ import Image from 'next/image'
 import { useProjects } from '@/lib/api/project/queries'
 
 const ProjectsList = ({ projects }: { projects: Project[] }) => {
+  const pathname = usePathname()
+
+  function isActive(projectId: string) {
+    return pathname === `/project/${projectId}`
+  }
+
   return (
     <SidebarGroup>
       <SidebarMenu>
@@ -59,7 +65,7 @@ const ProjectsList = ({ projects }: { projects: Project[] }) => {
               <SidebarMenuSub>
                 {projects.map((project) => (
                   <SidebarMenuSubItem key={project.id}>
-                    <SidebarMenuSubButton asChild>
+                    <SidebarMenuSubButton asChild isActive={isActive(project.id)}>
                       <Link href={`/project/${project.id}`}>{project.name}</Link>
                     </SidebarMenuSubButton>
                   </SidebarMenuSubItem>
