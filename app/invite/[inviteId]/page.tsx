@@ -18,7 +18,7 @@ export default async function Page({ params }: { params: Promise<{ inviteId: str
   })
 
   if (!session?.user) {
-    redirect('/sign-in')
+    redirect(`/sign-in?invite=${inviteId}`)
   }
 
   const userId = session.user.id

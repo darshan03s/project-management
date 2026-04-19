@@ -4,11 +4,18 @@ import PageWrapper from '@/components/page-wrapper'
 import { Button } from '@/components/ui/button'
 import { Google } from '@/components/ui/svgs/google'
 import { authClient } from '@/lib/auth-client'
+import { useSearchParams } from 'next/navigation'
 
 export default function Page() {
+  const searchParams = useSearchParams()
+  const inviteId = searchParams.get('invite')
+
+  const callBackURL = inviteId ? `/invite/${inviteId}` : `/`
+
   async function handleSignIn() {
     await authClient.signIn.social({
-      provider: 'google'
+      provider: 'google',
+      callbackURL: callBackURL
     })
   }
 
